@@ -1,8 +1,28 @@
 // ─── Configuration ──────────────────────────────────────────────────────────
-const API = 'http://localhost:8000';
+const API = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : 'http://localhost:8000';
 let docs = [];
 let pollTimers = {};
 let isBackendOffline = false;
+
+// ─── Helper with Cold-Start Wakeup Retry ─────────────────────────────────────
+async function fetchWithWakeupRetry(url, options = {}, retries = 1) {
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok && [502, 503, 504].includes(response.status) && retries > 0) {
+      showToast('Server is waking up (free plan), please wait up to a minute', 10000);
+      await new Promise(res => setTimeout(res, 5000));
+      return fetchWithWakeupRetry(url, options, retries - 1);
+    }
+    return response;
+  } catch (err) {
+    if (retries > 0) {
+      showToast('Server is waking up (free plan), please wait up to a minute', 10000);
+      await new Promise(res => setTimeout(res, 5000));
+      return fetchWithWakeupRetry(url, options, retries - 1);
+    }
+    throw err;
+  }
+}
 
 // ─── Health & Status ─────────────────────────────────────────────────────────
 async function checkHealth() {
@@ -22,7 +42,7 @@ async function checkHealth() {
 // ─── Documents ───────────────────────────────────────────────────────────────
 async function loadDocuments() {
   try {
-    const r = await fetch(API + '/api/v1/documents/', { signal: AbortSignal.timeout(5000) });
+    const r = await fetchWithWakeupRetry(API + '/api/v1/documents/', { signal: AbortSignal.timeout(10000) });
     const d = await r.json();
     docs = d.documents || [];
     renderDocs();
@@ -140,7 +160,7 @@ function showToast(msg, duration=3000) {
 
 async function uploadFile(file) {
   const ext = file.name.split('.').pop().toLowerCase();
-  if (!['pdf','txt','docx'].includes(ext)) { alert('Only PDF, TXT and DOCX files are supported.'); return; }
+  if (!['pdf','txt'].includes(ext)) { alert('Only PDF and TXT files are supported.'); return; }
   if (file.size > 10 * 1024 * 1024) { alert('File too large. Max 10 MB.'); return; }
 
   function showPdfPreview(file) {
@@ -166,7 +186,7 @@ async function uploadFile(file) {
   const form = new FormData();
   form.append('file', file);
   try {
-    const r = await fetch(API + '/api/v1/documents/upload', {method:'POST', body:form});
+    const r = await fetchWithWakeupRetry(API + '/api/v1/documents/upload', {method:'POST', body:form});
     const d = await r.json();
     if (r.ok) {
       showToast('Document uploaded successfully.', 3000);
@@ -236,7 +256,7 @@ window.sendQuestion = async function() {
   if (scope) body.document_id = scope;
 
   try {
-    const r = await fetch(API + '/api/v1/query/', {
+    const r = await fetchWithWakeupRetry(API + '/api/v1/query/', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(body)
@@ -255,6 +275,7 @@ window.sendQuestion = async function() {
     if (inputContainer) inputContainer.classList.remove('generating');
   }
 }
+
 
 // ─── Utility Functions ───────────────────────────────────────────────────────
   
