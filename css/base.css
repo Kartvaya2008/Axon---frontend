@@ -1,0 +1,27 @@
+/* ═══════════════════════════════════════════════════
+   base.css — Reset, CSS custom properties (tokens),
+              and typography defaults
+   ═══════════════════════════════════════════════════ */
+
+/* ── Box-model reset ─────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Design tokens — Light (default) ────────────── */
+:root {
+  --bg-main:        #F6F6F6;
+  --bg-sidebar:     #D9CAB3;
+  --bg-hover:       #6D9886;
+  --border:         #6D9886;
+  --border-subtle:  #D9CAB3;
+  --text-primary:   #212121;
+  --text-secondary: #212121;
+  --text-tertiary:  #6D9886;
+  --black:          #212121;
+  --white:          #F6F6F6;
+  --white-text:     #F6F6F6;
+  --btn-border:     #212121;
+}
