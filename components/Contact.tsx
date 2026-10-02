@@ -51,7 +51,7 @@ export default function Contact() {
       <Marquee words={marqueeWords} speed={45} />
 
       <div className="shell py-24 md:py-36">
-        <p className="t-mono mb-6">{outro.eyebrow} — Contact</p>
+        <p className="t-mono mb-6">{outro.eyebrow} — Start</p>
 
         <div className="outro-zoom origin-left">
           <SplitHeading
@@ -93,7 +93,7 @@ export default function Contact() {
 
       <div className="shell flex flex-wrap items-center justify-between gap-6 border-t border-[var(--color-line)] py-8">
         <p className="t-mono">
-          © {new Date().getFullYear()} {identity.name}
+          © {new Date().getFullYear()} Axon Document Intelligence
         </p>
 
         <nav aria-label="Social links">
@@ -117,7 +117,7 @@ export default function Contact() {
           </ul>
         </nav>
 
-        <p className="t-mono">Built with Next.js, GSAP &amp; Three.js</p>
+        <p className="t-mono">Powered by FastAPI, FAISS &amp; Groq</p>
       </div>
     </footer>
   );

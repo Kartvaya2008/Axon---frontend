@@ -102,8 +102,8 @@ export default function CardStack() {
     >
       <div className="shell py-20 md:pb-0 md:pt-32">
         <header className="mb-14">
-          <p className="t-mono mb-4">Act IV — Capability</p>
-          <SplitHeading text="What I actually do" className="t-h1" />
+          <p className="t-mono mb-4">Act IV — Capabilities</p>
+          <SplitHeading text="How Axon works" className="t-h1" />
         </header>
       </div>
 

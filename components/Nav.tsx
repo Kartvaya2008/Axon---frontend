@@ -202,7 +202,7 @@ export default function Nav() {
 
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="nav-meta">
-            <p className="t-mono mb-2">Elsewhere</p>
+            <p className="t-mono mb-2">Links</p>
             <ul className="flex flex-wrap gap-x-5 gap-y-1">
               {socials.map((s) => (
                 <li key={s.label}>

@@ -66,8 +66,8 @@ export default function Experience() {
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1.1fr_1fr] lg:gap-24">
           {/* ---- Timeline ------------------------------------------- */}
           <div>
-            <p className="t-mono mb-4">Act V — The path</p>
-            <SplitHeading text="Where I have been" className="t-h2 mb-14" />
+            <p className="t-mono mb-4">Act V — The roadmap</p>
+            <SplitHeading text="How Axon was built" className="t-h2 mb-14" />
 
             <ol className="exp-list relative pl-8">
               {/* Rail */}
@@ -101,8 +101,8 @@ export default function Experience() {
 
           {/* ---- Toolkit -------------------------------------------- */}
           <div>
-            <p className="t-mono mb-4">The toolkit</p>
-            <SplitHeading text="What I reach for" className="t-h2 mb-14" />
+            <p className="t-mono mb-4">The technology</p>
+            <SplitHeading text="What powers it" className="t-h2 mb-14" />
 
             <dl className="flex flex-col">
               {stack.map((group) => (

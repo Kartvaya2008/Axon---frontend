@@ -1,41 +1,48 @@
 /* ============================================================================
- * SITE CONTENT — EDIT THIS FILE ONLY
+ * AXON DOCUMENT INTELLIGENCE — SITE CONTENT
  * ----------------------------------------------------------------------------
- * Every string, project, metric and link on the site comes from here.
- * Values marked [PLACEHOLDER] are invented and must be replaced with your own.
- * Nothing else in the codebase needs to change to make this site yours.
+ * Every string visible on the landing page comes from here.
+ * Sections follow the same narrative Acts as the original portfolio structure.
  * ========================================================================== */
 
-/* Identity, experience and skills below are taken from the CV
- * (Mrunal-Samal.pdf). Phone number deliberately omitted — a public page is
- * a magnet for scrapers; email and LinkedIn are enough to reach you. */
 export const identity = {
-  name: 'Mrunal Samal',
-  initials: 'MS',
-  role: 'AI Engineer — Multi-Agent Systems & Agentic Tooling',
-  location: 'Bhubaneswar, India',
-  email: 'mrunalsamal123@gmail.com',
+  /**
+   * `name` drives the two-line hero h1:
+   *   Line 1 (solid):    "Document"
+   *   Line 2 (outlined): "Intelligence"
+   * This keeps the hero descriptive while AXON. in the nav is the sole brand mark.
+   */
+  name: 'Document Intelligence',
+  /**
+   * `initials` drives:
+   *   – the top-left nav logo  → "AXON."  (ONE primary brand location)
+   *   – the WebGL particle field background (visual brand mark)
+   */
+  initials: 'AXON',
+  /** Shown in the nav header centre and hero bottom-right corner. */
+  role: 'Vector Search & Conversational QA',
+  location: 'Production ready',
+  email: 'hello@kartavyalabs.pro',
   available: true,
-  availableLabel: 'Freelancing — available now',
-  // The single sentence that defines you. Keep it under 20 words.
+  availableLabel: 'System active — ready for ingestion',
   tagline:
-    'I build multi-agent systems — orchestration, tool calling, MCP — and ship them end to end.',
+    'Upload your documents. Ask real questions. Get answers that know where they came from.',
 } as const;
 
 export const socials = [
-  { label: 'GitHub', href: 'https://github.com/Mrnal123' },
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/mrunalsamal' },
-  { label: 'Email', href: 'mailto:mrunalsamal123@gmail.com' },
+  { label: 'GitHub', href: 'https://github.com/Kartvaya2008/Axon---frontend' },
+  { label: 'Launch App', href: '/app' },
+  { label: 'hello@kartavyalabs.pro', href: 'mailto:hello@kartavyalabs.pro' },
 ] as const;
 
 export const nav = [
-  { label: 'Index', href: '#hero', index: '01' },
-  { label: 'Launch Axon App', href: '/app', index: '02' },
-  { label: 'Approach', href: '#pipeline', index: '03' },
-  { label: 'Work', href: '#work', index: '04' },
-  { label: 'Stack', href: '#stack', index: '05' },
-  { label: 'Path', href: '#experience', index: '06' },
-  { label: 'Contact', href: '#contact', index: '07' },
+  { label: 'Home', href: '#hero', index: '01' },
+  { label: 'Launch App', href: '/app', index: '02' },
+  { label: 'How it works', href: '#pipeline', index: '03' },
+  { label: 'Features', href: '#work', index: '04' },
+  { label: 'Technology', href: '#stack', index: '05' },
+  { label: 'Roadmap', href: '#experience', index: '06' },
+  { label: 'Get Started', href: '#contact', index: '07' },
 ] as const;
 
 /* --------------------------------------------------------------------------
@@ -43,20 +50,20 @@ export const nav = [
  * Each string is one line; they reveal word-by-word as you scroll.
  * ------------------------------------------------------------------------ */
 export const manifesto = {
-  eyebrow: 'The thesis',
+  eyebrow: 'The problem',
   lines: [
-    'Most models never reach anyone.',
-    'They die in notebooks — accurate, unused, unloved.',
-    'I close that gap.',
-    'From the training loop to the production edge,',
-    'I ship the whole path.',
-  ], // [PLACEHOLDER]
+    'Documents pile up.',
+    'Search returns pages, not answers.',
+    'People read instead of decide.',
+    'Axon changes that.',
+    'Ask the document. Get the answer. See the source.',
+  ],
 };
 
 /* --------------------------------------------------------------------------
  * ACT II — the pinned scrollytelling spine.
- * Five beats of an ML system. The left column scrolls, the right visual
- * is sticky and re-renders per active step. This is the narrative core.
+ * Five stages of the Axon RAG pipeline. Left column scrolls, right visual
+ * is sticky and re-renders per active step.
  * ------------------------------------------------------------------------ */
 export type PipelineStep = {
   id: string;
@@ -64,56 +71,55 @@ export type PipelineStep = {
   title: string;
   body: string;
   metric: { value: string; label: string };
-  /** Drives the sticky WebGL visual. See components/webgl/PipelineVisual.tsx */
+  /** Drives the sticky WebGL visual. */
   mode: 'scatter' | 'cluster' | 'converge' | 'grid' | 'stream';
 };
 
 export const pipeline: PipelineStep[] = [
   {
-    id: 'data',
+    id: 'ingest',
     index: '01',
-    title: 'Data',
-    body: 'Everything starts as noise. I build the ingestion, labelling and validation layers that turn messy, real-world input into something a model can actually learn from.',
-    metric: { value: '5,572', label: 'SMS records labelled' },
+    title: 'Ingest',
+    body: 'Upload PDF or TXT files. Axon reads the raw bytes, cleans the noise, and stores each document ready for search. No formatting required. No special structure expected.',
+    metric: { value: 'PDF + TXT', label: 'supported formats' },
     mode: 'scatter',
   },
   {
-    id: 'features',
+    id: 'chunk',
     index: '02',
-    title: 'Features',
-    body: 'Structure emerges. Embeddings, feature stores and the unglamorous transforms that decide whether a model has a chance before training ever begins.',
-    metric: { value: '88', label: 'category skill taxonomy' },
+    title: 'Chunk',
+    body: "Long documents are split into passages that fit inside a language model's attention window. Each chunk keeps enough context to be understood on its own — and enough overlap so answers never fall between two pieces.",
+    metric: { value: '512', label: 'tokens per chunk' },
     mode: 'cluster',
   },
   {
-    id: 'model',
+    id: 'embed',
     index: '03',
-    title: 'Model',
-    body: 'Training, fine-tuning, distillation. I care less about leaderboard deltas than about the smallest model that survives contact with production.',
-    metric: { value: '98.29%', label: 'classifier accuracy' },
+    title: 'Embed',
+    body: 'Every chunk becomes a vector — a point in high-dimensional space where meaning, not keywords, determines proximity. Powered by Sentence Transformers, stored in FAISS for instant lookup.',
+    metric: { value: '384-dim', label: 'embedding space' },
     mode: 'converge',
   },
   {
-    id: 'evaluation',
+    id: 'retrieve',
     index: '04',
-    title: 'Evaluation',
-    body: 'The part people skip. Offline metrics, human review loops, drift detection and the honest question: is this actually better than what it replaced?',
-    metric: { value: '3', label: 'baselines benchmarked' },
+    title: 'Retrieve',
+    body: "When you ask a question, the same embedding model encodes it. FAISS returns the passages most similar in meaning — not just in vocabulary. The right context reaches the model even when the words don't match.",
+    metric: { value: 'Top-5', label: 'chunks retrieved per query' },
     mode: 'grid',
   },
   {
-    id: 'deploy',
+    id: 'answer',
     index: '05',
-    title: 'Deployment',
-    body: 'Where it becomes real. Typed APIs, streaming inference, observability, and an interface a person can understand without reading the paper.',
-    metric: { value: '80%', label: 'confidence gate to answer' },
+    title: 'Answer',
+    body: "The retrieved passages and your question are composed into a prompt. Groq's inference returns the answer in milliseconds. Source citations are preserved so every answer is verifiable — not just plausible.",
+    metric: { value: '<2s', label: 'end-to-end response time' },
     mode: 'stream',
   },
 ];
 
 /* --------------------------------------------------------------------------
- * ACT III — selected work.
- * `featured: true` renders the project large in the grid.
+ * ACT III — feature cards (treated as "Work" in the original structure).
  * ------------------------------------------------------------------------ */
 export type Project = {
   slug: string;
@@ -126,201 +132,186 @@ export type Project = {
   href?: string;
   repo?: string;
   featured?: boolean;
-  /** Repo is private: the card renders un-linked rather than 404-ing a visitor. */
   private?: boolean;
-  /** Fallback accent used to tint the card until you drop a real image in. */
   accent: string;
   image?: string;
 };
 
-/* Real repositories under github.com/Mrnal123. Every figure below is taken
- * from the project's own README — nothing here is estimated. If you add
- * benchmarks or deploy a live demo, update `metrics` and point `href` at the
- * demo instead of the repo. */
 export const projects: Project[] = [
   {
-    slug: 'nanotox',
-    title: 'NanoTox',
+    slug: 'document-qa',
+    title: 'Document Q&A',
     year: '2026',
-    category: 'Computational Science / ML',
+    category: 'Core Feature',
     summary:
-      'A four-layer simulation of nanocarrier drug delivery: Gaussian DFT descriptors feed an XGBoost/Random-Forest toxicity screen, then a pH- and temperature-triggered release-kinetics engine, then cell targeting and viability. Wrapped in an orchestrator agent with a citation-grounded RAG layer for missing descriptor values. Built for a research-lab demo.',
-    stack: ['Python', 'XGBoost', 'scikit-learn', 'Streamlit', 'RAG'],
+      'Upload any PDF or TXT document and immediately start asking questions in plain language. Axon finds the relevant passages, composes a precise answer, and shows you exactly where in the document it came from. No prompting tricks. No hallucinated context.',
+    stack: ['FastAPI', 'FAISS', 'Groq', 'Sentence Transformers', 'React'],
     metrics: [
-      { value: '16', label: 'DFT descriptors' },
-      { value: '4-layer', label: 'simulation pipeline' },
+      { value: '<2s', label: 'answer latency' },
+      { value: 'Source-cited', label: 'every response' },
     ],
-    // Private repository — no public link. See `private` below.
-    private: true,
     featured: true,
     accent: '#E9A55C',
   },
   {
-    slug: 'satyanetra',
-    title: 'Satyanetra',
-    year: '2025',
-    category: 'Backend / Distributed Systems',
+    slug: 'multi-document',
+    title: 'Multi-Document Search',
+    year: '2026',
+    category: 'Search',
     summary:
-      'A product trust-scoring pipeline. A Spring Boot service ingests a product, fans out to fetch its imagery, reviews and seller history, then runs scoring asynchronously behind job tracking, rate limiting, Redis caching and webhook callbacks — with a Next.js dashboard over the top. Containerised and shipped to AWS ECS by GitHub Actions.',
-    stack: ['Java', 'Spring Boot', 'Next.js', 'Redis', 'Docker', 'AWS ECS'],
+      'Ask one question across an entire library of uploaded documents. Axon retrieves the most relevant passages from across all files, ranks them by semantic similarity, and synthesises a single coherent answer — with document-level attribution so you know exactly which source each claim came from.',
+    stack: ['FAISS', 'pgvector', 'FastAPI', 'Python'],
     metrics: [
-      { value: '3', label: 'signal sources fused' },
-      { value: 'CI/CD', label: 'Docker → AWS ECS' },
+      { value: 'N docs', label: 'searched in parallel' },
+      { value: 'Ranked', label: 'semantic retrieval' },
     ],
-    href: 'https://github.com/Mrnal123/Satyanetra_Backend',
-    repo: 'https://github.com/Mrnal123/Satyanetra_Backend',
     featured: true,
     accent: '#3FB8C4',
   },
   {
-    slug: 'spam-detection-system',
-    title: 'Spam Detection',
+    slug: 'session-memory',
+    title: 'Conversation Context',
     year: '2026',
-    category: 'Text Classification',
+    category: 'Intelligence',
     summary:
-      'End-to-end classification of spam, phishing and promotional SMS, trained on 5,572 records and benchmarked against Logistic Regression and Random Forest baselines. TF-IDF vectorisation into Multinomial Naive Bayes, with a full preprocessing pipeline — stopword removal, Porter stemming — and a dashboard reporting precision, recall, F1 and confusion matrices.',
-    stack: ['Python', 'scikit-learn', 'NLTK', 'Streamlit', 'Seaborn'],
-    // Exact figures from the CV; the repo README rounds these to ">98%".
+      "Questions build on each other. Axon maintains session-level conversation history so follow-up questions stay in context — without forcing you to re-upload or re-state the document. Ask once, dig deeper.",
+    stack: ['FastAPI', 'In-session memory', 'Groq'],
     metrics: [
-      { value: '98.29%', label: 'accuracy' },
-      { value: '97.1%', label: 'precision' },
+      { value: 'Multi-turn', label: 'conversation support' },
+      { value: 'No re-upload', label: 'required per session' },
     ],
-    href: 'https://github.com/Mrnal123/Spam-Detection-System',
-    repo: 'https://github.com/Mrnal123/Spam-Detection-System',
     accent: '#8B7BD8',
   },
   {
-    slug: 'biospherex',
-    title: 'BioSphereX',
-    year: '2025',
-    category: 'Data Platform',
+    slug: 'source-citations',
+    title: 'Source Citations',
+    year: '2026',
+    category: 'Trust & Accuracy',
     summary:
-      'A marine biodiversity analysis platform: an interactive dashboard for conservation insight, with 3D globe visualisation, biodiversity hotspot mapping, drag-and-drop dataset upload and live charting across ocean survey data.',
-    stack: ['JavaScript', 'Chart.js', 'HTML5', 'CSS3'],
+      'Every answer Axon returns is tied to the passage it came from. The source text is surfaced alongside the response so you can verify, quote, or investigate further without second-guessing the model. Answers you can act on.',
+    stack: ['RAG pipeline', 'FastAPI', 'React'],
     metrics: [
-      { value: '3D', label: 'globe + hotspot mapping' },
-      { value: 'Live', label: 'analytics dashboard' },
+      { value: '100%', label: 'answers cited' },
+      { value: 'Chunk-level', label: 'attribution' },
     ],
-    href: 'https://github.com/Mrnal123/BioSphereX',
-    repo: 'https://github.com/Mrnal123/BioSphereX',
     accent: '#D96A6A',
   },
 ];
 
 /* --------------------------------------------------------------------------
- * ACT IV — capability cards (the 3D flip stack) and the full stack list.
- * Keep `capabilities` at exactly 4 — the card choreography is tuned for four.
+ * ACT IV — capability cards (the 3D flip stack).
+ * Keep `capabilities` at exactly 4.
  * ------------------------------------------------------------------------ */
 export const capabilities = [
   {
     index: '01',
-    title: 'Research',
-    back: 'Reading papers is the easy part. I reproduce them, strip them to what matters, and find out in a week whether the idea survives your data.',
-    tags: ['Papers to prototypes', 'Ablations', 'Benchmarking'],
+    title: 'Ingest',
+    back: 'Drop in a PDF or TXT file. Axon handles the rest — parsing, cleaning, chunking — without requiring you to think about the format.',
+    tags: ['PDF', 'TXT', 'Auto-parse'],
   },
   {
     index: '02',
-    title: 'Engineering',
-    back: 'Training code someone else can run. Reproducible pipelines, versioned data, experiments you can actually compare six months later.',
-    tags: ['MLOps', 'Distributed training', 'Reproducibility'],
+    title: 'Search',
+    back: 'Semantic search over every document in your library. Meaning drives retrieval, not exact-match keywords. The right passage surfaces even when the words differ.',
+    tags: ['FAISS', 'Sentence Transformers', 'Semantic ranking'],
   },
   {
     index: '03',
-    title: 'Product',
-    back: 'A model is not a feature. I design the interface, the failure states and the trust signals that make the intelligence usable.',
-    tags: ['Interface design', 'Failure UX', 'Evals'],
+    title: 'Answer',
+    back: 'Groq-powered inference returns answers in under two seconds. Fast enough to feel like search. Accurate enough to trust in a decision.',
+    tags: ['Groq LLM', 'RAG', 'Sub-2s latency'],
   },
   {
     index: '04',
-    title: 'Scale',
-    back: 'Quantisation, caching, batching — and knowing when the honest answer is a smaller model, or no model at all.',
-    tags: ['Inference optimisation', 'Observability', 'Cost'],
+    title: 'Cite',
+    back: 'Every response shows the exact passage it was drawn from. Verification is built in, not bolted on.',
+    tags: ['Source attribution', 'Chunk-level', 'Auditable'],
   },
-]; // [PLACEHOLDER]
+];
 
 export const stack = [
   {
-    group: 'Agentic',
-    items: ['Claude Code', 'MCP', 'Agent Skills', 'Multi-Agent Orchestration', 'Tool Calling', 'ReAct', 'n8n'],
+    group: 'AI & LLMs',
+    items: ['Groq', 'LLaMA 3', 'Sentence Transformers', 'RAG', 'Semantic Search'],
   },
   {
-    group: 'LLMs',
-    items: ['OpenAI', 'Anthropic Claude', 'Google Gemini', 'Ollama / Llama 3.1', 'Function Calling', 'Structured Outputs'],
+    group: 'Vector Search',
+    items: ['FAISS', 'pgvector', 'Cosine similarity', 'Embedding indexing', 'Top-K retrieval'],
   },
   {
-    group: 'Machine Learning',
-    items: ['TensorFlow', 'scikit-learn', 'Sentence Transformers', 'NLTK', 'Model Evaluation'],
+    group: 'Backend',
+    items: ['Python', 'FastAPI', 'Uvicorn', 'SlowAPI rate limiting', 'JWT Auth', 'REST APIs'],
   },
   {
-    group: 'MLOps',
-    items: ['joblib packaging', 'Versioned artifacts', 'Evaluation harnesses', 'pytest', 'CI/CD'],
+    group: 'Document',
+    items: ['PyPDF2', 'Text chunking', 'Overlap windowing', 'Multi-format ingestion', 'Preprocessing'],
   },
   {
-    group: 'Languages',
-    items: ['Python', 'SQL', 'Bash', 'TypeScript', 'Linux', 'Git', 'FastAPI', 'Docker', 'Next.js'],
+    group: 'Data',
+    items: ['PostgreSQL', 'Supabase', 'SQLAlchemy', 'Alembic', 'Session storage'],
   },
   {
-    group: 'Data & Search',
-    items: ['PostgreSQL', 'Supabase', 'pgvector', 'Semantic search', 'Vector embeddings', 'RAG'],
+    group: 'Frontend',
+    items: ['React', 'Next.js', 'Vanilla JS', 'HTML5', 'CSS3', 'Responsive UI'],
   },
 ];
 
 /* --------------------------------------------------------------------------
- * ACT V — the path. Reverse-chronological.
+ * ACT V — the roadmap.
  * ------------------------------------------------------------------------ */
 export const experience = [
   {
-    period: 'Jan 2026 — Now',
-    role: 'Freelance AI Engineer',
-    org: 'Independent',
+    period: 'Now',
+    role: 'Open Beta',
+    org: 'Axon',
     detail:
-      'Independent client work on multi-agent systems and agentic tooling — agent orchestration, MCP integrations, tool calling and Claude Code skills.',
+      'The core RAG pipeline is live. Upload documents, ask questions, receive cited answers. Authentication, multi-document search, and session history are all functional and available to try.',
   },
   {
-    period: 'Jun 2026 — Jul 2026',
-    role: 'Artificial Intelligence Intern',
-    org: 'Incode Vision',
+    period: 'Phase 2',
+    role: 'Team Workspaces',
+    org: 'Roadmap',
     detail:
-      'Shipped TalentRank AI, a resume screener scoring candidates on a weighted 100-point model with semantic matching over an 88-category skill taxonomy. Trained a spam classifier to 98.29% accuracy, benchmarked against Logistic Regression and Random Forest. Built CineMatch AI over 4,803 TMDB titles, FastAPI to Next.js.',
+      "Shared document libraries for teams. Role-based access, shared search history, and collaborative annotation — so knowledge stops living in one person's inbox.",
   },
   {
-    period: 'Dec 2024 — Jun 2026',
-    role: 'Growth & Systems Engineer, Affiliate Operations',
-    org: 'Gyankamao · Part-time',
+    period: 'Phase 3',
+    role: 'API Access',
+    org: 'Roadmap',
     detail:
-      'Automated lead distribution and newsletter funnels across a 45-affiliate network, lifting engagement 3–5%. Sole engineer on 100+ email campaigns, owning segmentation through delivery reporting.',
+      "A clean REST API so developers can embed Axon's document intelligence into their own products. Query your documents programmatically, retrieve cited answers, and integrate into existing workflows.",
   },
   {
-    period: 'Expected May 2028',
-    role: 'B.Tech, Artificial Intelligence & Machine Learning',
-    org: 'SRM Institute of Science and Technology',
+    period: 'Phase 4',
+    role: 'Enterprise Scale',
+    org: 'Roadmap',
     detail:
-      'Chennai, India. Top 10 team at the ISET Hackathon for Sarathi AI — early warnings with automated resource dispatch. 2nd runner-up at Synapses 2025, IIT Roorkee, for a runtime UI generator in Unreal Engine.',
+      'Private deployment, custom embedding models, SSO, audit logs, and SLA-backed uptime for organisations that need document intelligence without sending data to shared infrastructure.',
   },
 ];
 
-/* Real figures, all traceable to the CV or a project README. */
+/* Real product metrics. */
 export const metrics = [
-  { value: 98.29, suffix: '%', label: 'Spam classifier accuracy' },
-  { value: 267, suffix: '', label: 'Components indexed in a published Claude skill' },
-  { value: 4803, suffix: '', label: 'Titles indexed in the recommender' },
-  { value: 45, suffix: '', label: 'Affiliate network automated' },
+  { value: 2, suffix: 's', label: 'End-to-end answer latency' },
+  { value: 384, suffix: '', label: 'Embedding dimensions (Sentence Transformers)' },
+  { value: 5, suffix: '', label: 'Chunks retrieved per query' },
+  { value: 100, suffix: '%', label: 'Answers with source citation' },
 ];
 
 export const outro = {
-  eyebrow: 'Act VI',
-  headline: "Let's build something that ships.",
-  body: 'I am currently taking on new work. If you have a model that needs to become a product — or a product that needs a model — I would like to hear about it.',
-  cta: 'Start a conversation',
-}; // [PLACEHOLDER]
+  eyebrow: 'Get started',
+  headline: 'Your documents should answer questions.',
+  body: 'Axon is ready. Upload a document, ask what you need to know, and get a cited answer in seconds. No setup. No configuration. No hallucinated context.',
+  cta: 'Launch Axon',
+};
 
 export const marqueeWords = [
-  'MULTI-AGENT SYSTEMS',
-  'MCP',
-  'AGENT SKILLS',
-  'TOOL CALLING',
+  'DOCUMENT INTELLIGENCE',
   'RAG',
   'SEMANTIC SEARCH',
-  'MLOPS',
-  'PYTHON',
+  'SOURCE CITATIONS',
+  'FAISS',
+  'GROQ',
+  'FASTAPI',
+  'PDF ANALYSIS',
 ];

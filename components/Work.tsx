@@ -56,11 +56,11 @@ export default function Work() {
       <div className="shell">
         <header className="mb-14 flex flex-wrap items-end justify-between gap-6 md:mb-20">
           <div>
-            <p className="t-mono mb-4">Act III — Evidence</p>
-            <SplitHeading text="Selected work" className="t-h1" />
+            <p className="t-mono mb-4">Act III — Features</p>
+            <SplitHeading text="What Axon does" className="t-h1" />
           </div>
           <p className="t-mono">
-            {String(projects.length).padStart(2, '0')} projects
+            {String(projects.length).padStart(2, '0')} features
           </p>
         </header>
 
@@ -149,7 +149,7 @@ function Card({ project: p }: { project: Project }) {
 
           {linked ? (
             <span className="mt-7 flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-bone)]">
-              View repository
+              See how it works
               <span
                 aria-hidden="true"
                 className="inline-block transition-transform duration-500 group-hover:translate-x-1.5 motion-reduce:transition-none"
@@ -161,9 +161,9 @@ function Card({ project: p }: { project: Project }) {
             <span className="mt-7 flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-mute)]">
               <span
                 aria-hidden="true"
-                className="inline-block h-1 w-1 rounded-full bg-[var(--color-mute)]"
+                className="inline-block h-1 w-1 rounded-full bg-[var(--color-amber)]"
               />
-              Private — available on request
+              Included in Axon
             </span>
           )}
         </div>

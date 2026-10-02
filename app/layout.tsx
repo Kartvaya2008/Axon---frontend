@@ -26,16 +26,16 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: `${identity.name} — ${identity.role}`,
+  title: `Axon — ${identity.name}`,
   description: identity.tagline,
   openGraph: {
-    title: `${identity.name} — ${identity.role}`,
+    title: `Axon — ${identity.name}`,
     description: identity.tagline,
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${identity.name} — ${identity.role}`,
+    title: `Axon — ${identity.name}`,
     description: identity.tagline,
   },
 };
