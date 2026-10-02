@@ -1,0 +1,18 @@
+/* ═══════════════════════════════════════════════════
+   themes.css — Dark theme overrides
+   ═══════════════════════════════════════════════════ */
+
+:root[data-theme="dark"] {
+  --bg-main:        #121212;
+  --bg-sidebar:     #1A1A1A;
+  --bg-hover:       #2D2D2D;
+  --border:         #3A3A3A;
+  --border-subtle:  #2D2D2D;
+  --text-primary:   #FFFFFF;
+  --text-secondary: #B3B3B3;
+  --text-tertiary:  #808080;
+  --black:          #FFFFFF;
+  --white:          #1A1A1A;
+  --white-text:     #121212;
+  --btn-border:     #3A3A3A;
+}

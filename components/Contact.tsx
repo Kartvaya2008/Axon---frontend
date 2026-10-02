@@ -65,7 +65,7 @@ export default function Contact() {
 
         <Magnetic strength={0.3} className="inline-block">
           <a
-            href={`mailto:${identity.email}`}
+            href="/app"
             data-cursor="grow"
             className="group inline-flex items-center gap-4 border border-[var(--color-bone)] px-7 py-4 transition-colors duration-500 hover:bg-[var(--color-bone)] hover:text-[var(--color-void)] motion-reduce:transition-none"
           >

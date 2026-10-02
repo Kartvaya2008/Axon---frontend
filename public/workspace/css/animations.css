@@ -1,0 +1,22 @@
+/* ═══════════════════════════════════════════════════
+   animations.css — Keyframes and animation helpers
+   ═══════════════════════════════════════════════════ */
+
+/* ── Message entrance ────────────────────────────── */
+@keyframes fadeInMsg {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Typing dots ─────────────────────────────────── */
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.3; }
+  40%           { opacity: 1; }
+}
+
+/* ── Input "generating" glow ─────────────────────── */
+@keyframes sastaShine {
+  0%   { border-color: var(--text-tertiary); box-shadow: 0 0 8px 1px var(--text-tertiary); }
+  50%  { border-color: var(--text-primary);  box-shadow: 0 0 24px 6px var(--text-primary); }
+  100% { border-color: var(--text-tertiary); box-shadow: 0 0 8px 1px var(--text-tertiary); }
+}

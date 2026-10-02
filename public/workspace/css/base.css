@@ -1,0 +1,43 @@
+/* ═══════════════════════════════════════════════════
+   base.css — Reset, CSS custom properties (tokens),
+              and typography defaults
+   ═══════════════════════════════════════════════════ */
+
+/* ── Box-model reset ─────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Design tokens — Permanent Dark Mode ────────── */
+:root {
+  --bg-main:        #121212;
+  --bg-sidebar:     #1A1A1A;
+  --bg-hover:       #2D2D2D;
+  --border:         #3A3A3A;
+  --border-subtle:  #2D2D2D;
+  --text-primary:   #FFFFFF;
+  --text-secondary: #B3B3B3;
+  --text-tertiary:  #808080;
+  --black:          #FFFFFF;
+  --white:          #1A1A1A;
+  --white-text:     #121212;
+  --btn-border:     #3A3A3A;
+}
+
+/* Light mode override (kept for future re-enabling) */
+:root[data-theme="light"] {
+  --bg-main:        #F6F6F6;
+  --bg-sidebar:     #D9CAB3;
+  --bg-hover:       #6D9886;
+  --border:         #6D9886;
+  --border-subtle:  #D9CAB3;
+  --text-primary:   #212121;
+  --text-secondary: #212121;
+  --text-tertiary:  #6D9886;
+  --black:          #212121;
+  --white:          #F6F6F6;
+  --white-text:     #F6F6F6;
+  --btn-border:     #212121;
+}

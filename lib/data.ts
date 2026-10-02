@@ -30,11 +30,12 @@ export const socials = [
 
 export const nav = [
   { label: 'Index', href: '#hero', index: '01' },
-  { label: 'Approach', href: '#pipeline', index: '02' },
-  { label: 'Work', href: '#work', index: '03' },
-  { label: 'Stack', href: '#stack', index: '04' },
-  { label: 'Path', href: '#experience', index: '05' },
-  { label: 'Contact', href: '#contact', index: '06' },
+  { label: 'Launch Axon App', href: '/app', index: '02' },
+  { label: 'Approach', href: '#pipeline', index: '03' },
+  { label: 'Work', href: '#work', index: '04' },
+  { label: 'Stack', href: '#stack', index: '05' },
+  { label: 'Path', href: '#experience', index: '06' },
+  { label: 'Contact', href: '#contact', index: '07' },
 ] as const;
 
 /* --------------------------------------------------------------------------
