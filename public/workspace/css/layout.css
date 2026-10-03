@@ -140,6 +140,7 @@ main {
 .chat-area {
   flex: 1;
   overflow-y: auto;
+  /* bottom padding reserves space so messages never hide under the input bar */
   padding: 24px 32px 140px;
   display: flex;
   flex-direction: column;
@@ -155,6 +156,8 @@ main {
   flex-direction: column;
   gap: 32px;
   flex: 1;
+  /* min-height ensures the empty-state can centre itself even with no messages */
+  min-height: 100%;
 }
 
 /* ── Floating Input Composer ─────────────────────── */
@@ -165,8 +168,9 @@ main {
   right: 0;
   display: flex;
   justify-content: center;
-  padding: 16px 24px calc(20px + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(180deg, transparent 0%, var(--bg-main) 30%);
+  /* taller gradient so it fades in smoothly behind messages */
+  padding: 20px 24px calc(24px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(180deg, transparent 0%, var(--bg-main) 40%);
   z-index: 20;
   transition: transform 0.3s ease;
 }

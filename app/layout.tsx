@@ -28,6 +28,10 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: `Axon — ${identity.name}`,
   description: identity.tagline,
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+  },
   openGraph: {
     title: `Axon — ${identity.name}`,
     description: identity.tagline,
