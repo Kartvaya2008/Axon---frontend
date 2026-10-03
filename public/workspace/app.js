@@ -5,23 +5,8 @@ let pollTimers = {};
 let isBackendOffline = false;
 
 // ─── Helper with Cold-Start Wakeup Retry ─────────────────────────────────────
-async function fetchWithWakeupRetry(url, options = {}, retries = 1) {
-  try {
-    const response = await fetch(url, options);
-    if (!response.ok && [502, 503, 504].includes(response.status) && retries > 0) {
-      showToast('Server is waking up (free plan), please wait up to a minute', 10000);
-      await new Promise(res => setTimeout(res, 5000));
-      return fetchWithWakeupRetry(url, options, retries - 1);
-    }
-    return response;
-  } catch (err) {
-    if (retries > 0) {
-      showToast('Server is waking up (free plan), please wait up to a minute', 10000);
-      await new Promise(res => setTimeout(res, 5000));
-      return fetchWithWakeupRetry(url, options, retries - 1);
-    }
-    throw err;
-  }
+async function fetchWithWakeupRetry(url, options = {}) {
+  return fetch(url, options);
 }
 
 // ─── Health & Status ─────────────────────────────────────────────────────────
