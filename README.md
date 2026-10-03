@@ -1,143 +1,61 @@
-# Cinematic AI/ML Portfolio
+# Ask Your Documents Anything: How Axon Turns Files into Answers
 
-**Live: https://mrunal-portofolio.vercel.app**
+You know the feeling. A 40-page contract, a project quotation, a stack of research PDFs. Somewhere inside is the one number or clause you need, and the only way to find it is to scroll, squint and hope.
 
-A scroll-driven, WebGL-accelerated portfolio built from the **Awwwards Pack**
-component library, following the scrollytelling skill's narrative-first method.
+Axon exists to end that. Upload your documents, ask in plain language, and get an answer that points back to where it came from.
 
-Deployed on Vercel from `main` — every push to this branch ships to production.
+## What it feels like
 
-```bash
-npm install
-npm run dev     # http://localhost:3000
-npm run build   # production build
-```
+You sign in with Google and drop in a few files: PDFs, Word documents, text files. A moment later they sit in your personal library, each marked "Ready."
 
----
+Then you simply ask. "What's the total project cost?" "Which modules are included?" "Give me a summary." Axon answers in a few clear sentences and shows the document name and page number underneath, so you can verify it in seconds. Prefer to read the original? Open the document preview, or view the extracted text right inside the app.
 
-## Make it yours
+It also behaves like an assistant rather than a search box. Say hello and it greets you by name. Ask a general question and it just answers. Ask something vague with several documents uploaded and it asks which one you mean. It only searches your files when your question is about them.
 
-**Edit [`lib/data.ts`](lib/data.ts) and nothing else.** Every string, project,
-metric, link and nav item on the site comes from that one file. Placeholder
-values are marked `// [PLACEHOLDER]` — search for that comment and you have
-your complete to-do list.
+If you are curious how an answer was produced, open "View steps" under any reply. You will see what Axon understood, what it searched, and which model wrote the response.
 
-The three things to change first:
+## Why you can trust the answers
 
-1. `identity` — your name, role, location, email, tagline.
-2. `socials` — currently pointing at `yourhandle`.
-3. `projects` — four invented projects (Atlas, Foundry, Tideline, Relay).
+Most chatbots answer from memory, which is fine for trivia but risky for your contract. Axon answers from your documents and says so plainly when the answer is not there.
 
-Add project images by dropping files into `public/` and setting `image:` on a
-project. Until then, each card uses its `accent` colour as a wash.
+That is possible because of a technique called retrieval-augmented generation (RAG). In simple terms, Axon does not hand the language model your whole library and hope for the best. It finds the few passages that matter and gives only those to the model.
 
----
+## Under the hood
 
-## The narrative
+Here is the journey of a document, in five steps.
 
-Scrollytelling only works when it serves a story, so the page is structured as
-six acts rather than a list of sections:
+1. **Extraction.** When you upload a file, Axon pulls out the text page by page and saves the full text, so you can read it later and so summaries can cover the entire document.
+2. **Chunking.** The text is split into overlapping passages of roughly a paragraph each. The overlap keeps sentences from being cut off mid-thought, and every chunk remembers its page number.
+3. **Embedding.** Each chunk is converted into a list of 384 numbers by an embedding model (all-MiniLM-L6-v2). Passages with similar meaning end up with similar numbers, which is how Axon can find "total project cost" even when the document says "TOTAL PROJECT COST ₹57,500" in a table.
+4. **Vector storage.** The numbers are stored in Supabase, using PostgreSQL with the pgvector extension, next to your account. This is your personal vector database.
+5. **Retrieval and answer.** When you ask a question, it is embedded the same way. Axon finds the closest chunks from your documents, then passes the question, your recent conversation and those passages to a large language model (served through Groq, with OpenRouter as a backup). The model writes the answer and the sources are attached.
 
-| Act | Section | The beat |
-|-----|---------|----------|
-| 0 | `Preloader` | A film gate opens |
-| I | `Hero` | Noise resolves into your name |
-| I | `Manifesto` | The thesis, one line at a time |
-| II | `Pipeline` | **Five ML stages, pinned** — the scrollytelling core |
-| III | `Work` | The evidence |
-| IV | `CardStack` | Capabilities, as a card fan that flips |
-| V | `Experience` | The path and the toolkit |
-| VI | `Contact` | The close |
+For summary-style requests, Axon skips the top-matches approach and works from the document's full text, so the summary reflects the whole file rather than a few fragments.
 
-The **Pipeline** section is the centrepiece and the one that most earns its
-motion: the sticky visual literally depicts the transformation each step
-describes — raw scatter, then clustering, then convergence, then an evaluation
-grid, then a live inference stream.
+## Your data stays yours
 
----
+Every document and every chunk belongs to a user. Sign-in runs through Google via Supabase Auth, the backend verifies your token on every request, and database-level Row Level Security means one user's library cannot be read by another. Search is always filtered to the signed-in user, never by anything the browser sends.
 
-## Components used from the Awwwards Pack
+## The stack, briefly
 
-Each pick, and why:
+- **Backend:** FastAPI (Python)
+- **Database and auth:** Supabase (PostgreSQL, pgvector, Google sign-in)
+- **Frontend:** a Next.js landing page and a lightweight web workspace
+- **Models:** open-source embeddings, with language models via Groq and OpenRouter
 
-| Library component | Used as | Why |
-|---|---|---|
-| `+24 Hero Animations/20` Cinematic loader | `Preloader.tsx` | Film-gate curtain — the literal "cinematic" open |
-| `+17 Webgl/9` Interactive particles | `webgl/ParticleField.tsx` | The one WebGL instance; text forming from noise matches the ML thesis |
-| `+54 Scroll Animation/44` Lusion 3D cards | `CardStack.tsx` | Pinned spread-then-flip for the four capabilities |
-| `+21 Navigation Menus/16` Noir menu | `Nav.tsx` | Dark moody overlay, matches the grade |
-| `+14 Text Animations/1` On-scroll text | `Manifesto.tsx` | Word-by-word brightening, scrubbed to scroll |
-| `+10 Grid Animations/7` Layout formation | `Work.tsx` | Cards assemble rather than merely fade |
-| `+24 Hover Effects/19` Magnetic cards | `ui/Magnetic` | Cursor lean on cards and CTAs |
-| `+19 Mouse Effect/19` GSAP cursor | `Cursor.tsx` | `quickTo` ring + dot, same approach as truus-clone |
-| `+11 SVG Animations/5` Path draw | `Experience.tsx` | Timeline rail draws as you scroll |
-| `+54 Scroll Animation/10` Telescope zoom | `Contact.tsx` | Outro headline scales in |
+## Who it helps
 
-### Two deliberate departures
+- **Founders and freelancers** checking quotations, proposals and agreements without rereading them.
+- **Students** pulling answers out of notes and papers.
+- **Teams** that keep knowledge buried in PDFs and want it to be askable.
+- **Anyone** who has ever searched a document with Ctrl+F and found nothing because the words did not match.
 
-- **No Framer Motion**, despite the kintarowwwards reference using it. GSAP is
-  already the tween engine; adding a second one breaks the library's
-  dependency-hygiene rule and ships a redundant ~32KB.
-- **The pipeline visual is Canvas 2D, not a second WebGL context.** The rule is
-  one Three.js instance per page. A 2D point field morphs just as convincingly
-  at a fraction of the cost — which means phones get the real visual instead of
-  a static fallback.
+## Where it is heading
+
+Voice is next. The groundwork for speech-to-text and text-to-speech is already in place, so you will be able to talk to your documents and have answers read aloud. After that, a mobile app is planned.
+
+The idea behind Axon is simple: your documents already contain the answers. The hard part was never the information. It was getting to it. Axon takes care of that.
 
 ---
 
-## Performance
-
-- **167 KB First Load JS.** Three.js is dynamically imported and is *not* in the
-  initial bundle.
-- WebGL only initialises on a device that passes `useHighEndDevice()` —
-  pointer-fine, ≥768px, ≥4 cores, ≥4GB RAM, and a real WebGL context. Phones
-  deliberately get the CSS aurora fallback: sustained WebGL thermal-throttles
-  into a *worse* experience.
-- Every animation loop pauses via `IntersectionObserver` when off-screen and via
-  `visibilitychange` when the tab is hidden.
-- Animation is confined to `transform` and `opacity`; scroll listeners are
-  `passive` and rAF-throttled.
-- Device pixel ratio is capped at 1.75 for WebGL, 2 for Canvas.
-
-## Accessibility
-
-- **`prefers-reduced-motion` is a first-class path, not an afterthought.** It
-  skips the preloader, disables Lenis entirely (native scroll returns), stops
-  every timeline, and — critically — the CSS force-reveals all pre-animation
-  hidden states so nothing can be stranded at `opacity: 0`.
-- Reveal states are gated behind a `.js-ready` class set by JS, so if JS fails
-  the page renders fully visible rather than blank.
-- The menu traps focus, closes on Escape, restores focus to its trigger, locks
-  scroll, and is `inert` when closed.
-- Anchor navigation moves focus to the target, not just the scroll position.
-- Scroll progress is exposed as a `role="progressbar"`, and stays on under
-  reduced motion because it is information, not decoration.
-- Skip link, visible focus rings, and the custom cursor is suppressed entirely
-  on touch and reduced-motion so native targets are never taken away.
-
-## Known gaps
-
-Identity, experience, skills, headline stats and pipeline figures now come
-from the CV; the projects come from real repos. What is still generic:
-
-- **`manifesto`** — the "models die in notebooks" thesis. It reads as
-  generic ML positioning and no longer matches the agentic/MCP focus. Worth
-  rewriting in your own voice.
-- **`capabilities`** — the four flip-cards. Plausible but unsourced, and
-  "reading papers is the easy part" overclaims for where you are.
-- **`outro`** — fine, but it's my wording, not yours.
-- No real images — cards use accent-colour washes.
-- Phone number is deliberately **not** on the page (scraper bait). Email and
-  LinkedIn are the contact paths.
-- Worth adding once they have READMEs: `Satyanetra_Backend` is already in,
-  but the **published Claude Code skill** (267-component library) and
-  **Decivio** (agentic life-simulation engine) are arguably stronger
-  differentiators than BioSphereX.
-- Worth adding once they have READMEs: `Satyanetra_Backend` (Next.js + Java,
-  Dockerised, deployed to AWS ECS via GitHub Actions — the strongest infra
-  work in the account) and the NanoTox line (DFT descriptors, toxicity
-  screening). Both were skipped here because there was nothing to describe
-  them from without guessing.
-- Verified in the built-in browser at 375px, 719px and 1280px. Not yet tested on
-  physical iOS/Android hardware, which is the only reliable way to confirm the
-  mobile browser-chrome and momentum-scroll behaviour.
+I can also turn this into a Docs page you can edit and share, or cut a shorter version for the landing page or a LinkedIn post, if you tell me where it will go.
