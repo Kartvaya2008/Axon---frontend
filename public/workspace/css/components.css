@@ -91,6 +91,7 @@
 }
 .doc-meta span:last-child::after { content: ""; margin: 0; }
 
+.doc-action-btn,
 .doc-delete {
   opacity: 0;
   background: none;
@@ -98,10 +99,13 @@
   cursor: pointer;
   color: var(--text-secondary);
   padding: 4px;
-  transition: color 150ms ease, opacity 150ms ease;
+  border-radius: 4px;
+  transition: color 150ms ease, opacity 150ms ease, background 150ms ease;
 }
+.doc-item:hover .doc-action-btn,
 .doc-item:hover .doc-delete { opacity: 1; }
-.doc-delete:hover { color: var(--text-primary); }
+.doc-action-btn:hover,
+.doc-delete:hover { color: var(--text-primary); background: var(--bg-hover); }
 
 /* ── Upload Button ───────────────────────────────── */
 .btn-upload {

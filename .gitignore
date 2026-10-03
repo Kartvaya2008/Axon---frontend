@@ -8,3 +8,5 @@ next-env.d.ts
 .remember/logs
 .remember/tmp
 .claude/
+.vercel
+.env*

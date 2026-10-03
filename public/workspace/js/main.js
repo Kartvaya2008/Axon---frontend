@@ -4,10 +4,11 @@
 
 import { API, fetchWithWakeupRetry } from './utils/api.js';
 import { showToast }                  from './utils/helpers.js';
+import { onAuthReady }                from './utils/auth.js';
 import {
   docs, loadDocuments, renderDocs, updateScopeSelect, deleteDoc
 } from './ui/documents.js';
-import { uploadFile }                 from './ui/upload.js';
+import { uploadFiles, initDragDrop } from './ui/upload.js';
 import {
   addMessage, addBotMessage, addSimpleBotMessage, addTyping
 } from './ui/chat.js';
@@ -15,6 +16,8 @@ import './ui/settings.js'; // side-effect: registers theme + modal handlers
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let isBackendOffline = false;
+/** Conversation history for context: [{role:'user'|'assistant', content:string}] */
+let chatHistory = [];
 
 // ── Health check ──────────────────────────────────────────────────────────────
 async function checkHealth() {
@@ -71,14 +74,18 @@ window.sendQuestion = async function() {
   chatArea.scrollTop = chatArea.scrollHeight;
 
   if (isBackendOffline) {
-    addSimpleBotMessage('Error: Cannot connect to the backend. Please ensure the server is running.');
+    addSimpleBotMessage('Could not reach the server. Please check your connection and try again.');
     if (inputContainer) inputContainer.classList.remove('generating');
     return;
   }
 
   const typingEl = addTyping();
   const scope = document.getElementById('doc-scope').value;
-  const body = { question: q, top_k: 5 };
+
+  // Send last 12 messages (6 turns) as history
+  const historyToSend = chatHistory.slice(-12);
+
+  const body = { question: q, top_k: 7, history: historyToSend };
   if (scope) body.document_id = scope;
 
   try {
@@ -89,10 +96,19 @@ window.sendQuestion = async function() {
     });
     const d = await r.json();
     typingEl.remove();
-    r.ok ? addBotMessage(d) : addSimpleBotMessage('Error: ' + (d.detail || 'Something went wrong.'));
+    if (r.ok) {
+      // Add user turn then assistant turn to history
+      chatHistory.push({ role: 'user', content: q });
+      chatHistory.push({ role: 'assistant', content: d.answer || '' });
+      // Keep at most 20 turns
+      if (chatHistory.length > 40) chatHistory = chatHistory.slice(-40);
+      addBotMessage(d);
+    } else {
+      addSimpleBotMessage('Error: ' + (d.detail || 'Something went wrong.'));
+    }
   } catch {
     typingEl.remove();
-    addSimpleBotMessage('Error: Cannot connect to the server. Please check your connection.');
+    addSimpleBotMessage('Could not reach the server. Please check your connection.');
   } finally {
     if (inputContainer) inputContainer.classList.remove('generating');
   }
@@ -124,11 +140,168 @@ window.togglePdfPane = function() {
   if (btn) btn.style.display = pane.classList.contains('collapsed') ? 'flex' : 'none';
 };
 
+// ── Voice / Speech Handlers ───────────────────────────────────────────────────
+let currentAudio = null;
+let currentAudioBtn = null;
+
+window.playAudioForMsg = async function(btn) {
+  const msgEl = btn.closest('.msg');
+  if (!msgEl) return;
+  const bubble = msgEl.querySelector('.msg-bubble');
+  if (!bubble) return;
+  const text = bubble.innerText.trim();
+  if (!text) return;
+
+  // Toggle stop if already playing this message
+  if (currentAudio && currentAudioBtn === btn) {
+    currentAudio.pause();
+    currentAudio = null;
+    currentAudioBtn = null;
+    btn.style.opacity = '1';
+    return;
+  }
+
+  if (currentAudio) {
+    currentAudio.pause();
+    if (currentAudioBtn) currentAudioBtn.style.opacity = '1';
+  }
+
+  btn.style.opacity = '0.5';
+  currentAudioBtn = btn;
+
+  try {
+    const r = await fetchWithWakeupRetry(API + '/api/v1/speech/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text.slice(0, 3000) })
+    });
+
+    if (r.status === 501) {
+      showToast('Voice is not set up yet');
+      btn.style.opacity = '1';
+      return;
+    }
+
+    if (!r.ok) {
+      showToast('Failed to synthesize speech');
+      btn.style.opacity = '1';
+      return;
+    }
+
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    currentAudio = audio;
+    audio.onended = () => {
+      btn.style.opacity = '1';
+      currentAudio = null;
+      currentAudioBtn = null;
+    };
+    audio.play();
+  } catch (err) {
+    console.error('TTS failed:', err);
+    showToast('Failed to synthesize speech');
+    btn.style.opacity = '1';
+  }
+};
+
+let mediaRecorder = null;
+let audioChunks = [];
+
+window.toggleVoiceRecord = async function() {
+  const micBtn = document.getElementById('mic-btn');
+  const input = document.getElementById('question-input');
+
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    if (micBtn) micBtn.style.color = '';
+    return;
+  }
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showToast('Audio recording is not supported in this browser.');
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      stream.getTracks().forEach(track => track.stop());
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const formData = new FormData();
+      formData.append('file', blob, 'recording.webm');
+
+      showToast('Transcribing audio...');
+      try {
+        const r = await fetchWithWakeupRetry(API + '/api/v1/speech/stt', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (r.status === 501) {
+          showToast('Voice is not set up yet');
+          return;
+        }
+
+        if (!r.ok) {
+          showToast('Failed to transcribe audio');
+          return;
+        }
+
+        const data = await r.json();
+        if (data.text) {
+          input.value = data.text;
+          window.autoResize(input);
+        }
+      } catch (err) {
+        console.error('STT failed:', err);
+        showToast('Failed to transcribe audio');
+      }
+    };
+
+    mediaRecorder.start();
+    if (micBtn) micBtn.style.color = '#ef4444';
+    showToast('Recording... click mic again to stop');
+  } catch (err) {
+    console.error('Microphone permission denied / error:', err);
+    showToast('Microphone access denied or unavailable.');
+  }
+};
+
 // ── Expose globals needed by inline HTML handlers ─────────────────────────────
 window.loadDocuments = loadDocuments;
 window.deleteDoc     = deleteDoc;
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
-checkHealth();
-loadDocuments();
-setInterval(checkHealth, 10000);
+onAuthReady((session) => {
+  if (!session) return;
+
+  // Show health status in background — never block UI
+  checkHealth().catch(() => { isBackendOffline = true; });
+
+  // Initialize drag & drop uploading
+  initDragDrop();
+
+  // Load documents; show inline error in doc list if it fails, never crash
+  loadDocuments().catch(err => {
+    console.error('[main] loadDocuments failed:', err);
+    const list = document.getElementById('doc-list');
+    if (list) list.innerHTML =
+      '<div style="padding:10px 28px;font-size:13px;color:#e05a5a;">Could not load documents. Check your connection.</div>';
+  });
+});
+
+// Periodic health ping — only when app is visible
+setInterval(() => {
+  try {
+    const as = document.getElementById('app-shell');
+    if (as && as.style.display !== 'none') checkHealth().catch(() => {});
+  } catch {}
+}, 10000);
